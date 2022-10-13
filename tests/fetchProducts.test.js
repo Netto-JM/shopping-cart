@@ -28,7 +28,9 @@ describe('1 - Teste a função fetchProducts', () => {
 
   test('testa se, ao chamar a função fetchProducts sem argumento, retorna o erro correto', async () => {
     expect.assertions(1);
-    expect(await fetchProducts()).toThrowError('You must provide an url');
+    await expect(fetchProducts())
+    .rejects
+    .toThrow('You must provide an url');
   })
   
 });
