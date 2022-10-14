@@ -20,4 +20,10 @@ describe('2 - Teste a função fetchItem', () => {
     expect(fetch).toHaveBeenCalledWith('https://api.mercadolibre.com/items/MLB1615760527');
   })
 
+  it('testa se o retorno da função fetchItem com o argumento "MLB1615760527" é correto', async () => {
+    expect.assertions(1);
+    const fetchedItem = await fetchItem('MLB1615760527');
+    expect(fetchedItem).toEqual(item);
+  })
+
 });
