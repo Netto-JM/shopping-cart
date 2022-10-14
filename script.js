@@ -3,6 +3,17 @@
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
+const cartItemListElement = document.querySelector('.cart__items');
+const emptyCartBtnElement = document.querySelector('.empty-cart');
+
+const emptyCart = () => {
+  while (cartItemListElement.firstChild) {
+    cartItemListElement.removeChild(cartItemListElement.firstChild);
+  }
+};
+
+emptyCartBtnElement.addEventListener('click', emptyCart);
+
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -78,7 +89,6 @@ const createCartItemElement = ({ id, title, price }) => {
 };
 
 const listedItemClickListener = async (itemId) => {
-  const cartItemListElement = document.querySelector('.cart__items');
   const itemInfo = await fetchItem(itemId);
   const cartItemElement = createCartItemElement(itemInfo);
   cartItemListElement.appendChild(cartItemElement);
