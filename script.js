@@ -70,13 +70,22 @@ const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', cartItemClickListener);
+  // li.addEventListener('click', cartItemClickListener);
   return li;
+};
+
+const listedItemClickListener = async (itemId) => {
+  const cartItemListElement = document.querySelector('.cart__items');
+  const itemInfo = await fetchItem(itemId);
+  const cartItemElement = createCartItemElement(itemInfo);
+  cartItemListElement.appendChild(cartItemElement);
 };
 
 const createProductListing = (searchResults) => {
   searchResults.forEach((result) => {
     const productItemElement = createProductItemElement(result);
+    const addItemButton = productItemElement.querySelector('.item__add');
+    addItemButton.addEventListener('click', () => { listedItemClickListener(result.id); });
     itemsSectionEl.appendChild(productItemElement);
   });
 };
