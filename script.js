@@ -3,8 +3,6 @@
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
-const itemsSectionEl = document.querySelector('.items');
-
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -87,6 +85,7 @@ const listedItemClickListener = async (itemId) => {
 };
 
 const createProductListing = (searchResults) => {
+  const itemsSectionEl = document.querySelector('.items');
   searchResults.forEach((result) => {
     const productItemElement = createProductItemElement(result);
     const addItemButton = productItemElement.querySelector('.item__add');
