@@ -5,11 +5,15 @@
 
 const cartItemListElement = document.querySelector('.cart__items');
 const emptyCartBtnElement = document.querySelector('.empty-cart');
+const totalPriceElement = document.querySelector('.total-price');
+let totalPrice = 0;
 
 const emptyCart = () => {
   while (cartItemListElement.firstChild) {
     cartItemListElement.removeChild(cartItemListElement.firstChild);
   }
+  totalPrice = 0;
+  totalPriceElement.textContent = 'R$ 0.00';
 };
 
 /**
@@ -65,9 +69,10 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  */
 const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
 
-const cartItemClickListener = (event) => {
-  const cartItem = event.target;
+const cartItemClickListener = (cartItem, price) => {
   cartItem.parentElement.removeChild(cartItem);
+  totalPrice -= price;
+  totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
 };
 
 /**
@@ -82,7 +87,9 @@ const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', cartItemClickListener);
+  li.addEventListener('click', (event) => { cartItemClickListener(event.target, price); });
+  totalPrice += price;
+  totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
   return li;
 };
 
