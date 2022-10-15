@@ -12,8 +12,6 @@ const emptyCart = () => {
   }
 };
 
-emptyCartBtnElement.addEventListener('click', emptyCart);
-
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -108,4 +106,5 @@ window.onload = async () => {
   const productList = await fetchProducts('computer');
   const { results } = productList;
   createProductListing(results);
+  emptyCartBtnElement.addEventListener('click', emptyCart);
 };
