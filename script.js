@@ -9,12 +9,17 @@ const totalPriceElement = document.querySelector('.total-price');
 const cartItems = [];
 let totalPrice = 0;
 
+const updatePrice = (price, isPositive) => {
+  if (price === 0) totalPrice = 0;
+  else totalPrice += isPositive ? price : -price;
+  totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+};
+
 const emptyCart = () => {
   while (cartItemListElement.firstChild) {
     cartItemListElement.removeChild(cartItemListElement.firstChild);
   }
-  totalPrice = 0;
-  totalPriceElement.textContent = 'R$ 0.00';
+  updatePrice(0);
   cartItems.length = 0;
   localStorage.removeItem('cartItems');
 };
@@ -72,11 +77,10 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  */
 const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
 
-const cartItemClickListener = (cartItem, price, itemId) => {
+const cartItemClickListener = (cartItem, price, neededInfo) => {
   cartItem.parentElement.removeChild(cartItem);
-  totalPrice -= price;
-  totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
-  cartItems.splice(cartItems.indexOf(itemId), 1);
+  updatePrice(price);
+  cartItems.splice(cartItems.indexOf(neededInfo), 1);
   if (!cartItems.length) {
     localStorage.removeItem('cartItems');
     return;
@@ -92,21 +96,26 @@ const cartItemClickListener = (cartItem, price, itemId) => {
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
-const createCartItemElement = ({ id, title, price }) => {
+const createCartItemElement = (neededInfo) => {
+  const { id, title, price } = neededInfo;
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', (event) => { cartItemClickListener(event.target, price, id); });
-  totalPrice += price;
-  totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+  li.addEventListener('click', (event) => {
+    cartItemClickListener(event.target, price, neededInfo); 
+  });
+  updatePrice(price, true);
   return li;
 };
 
-const listedItemClickListener = async (itemId) => {
-  const itemInfo = await fetchItem(itemId);
-  const cartItemElement = createCartItemElement(itemInfo);
+const getNeededInfo = ({ id, title, price }) => ({ id, title, price });
+
+const listedItemClickListener = async (itemId, savedInfo) => {
+  const itemInfo = savedInfo || await fetchItem(itemId);
+  const neededInfo = getNeededInfo(itemInfo);
+  const cartItemElement = createCartItemElement(neededInfo);
   cartItemListElement.appendChild(cartItemElement);
-  cartItems.push(itemId);
+  cartItems.push(neededInfo);
   saveCartItems(JSON.stringify(cartItems));
 };
 
@@ -120,9 +129,16 @@ const createProductListing = (searchResults) => {
   });
 };
 
+const buildSavedCartElements = (savedCartItems) => {
+  const userCartItems = JSON.parse(savedCartItems);
+  userCartItems.forEach((savedInfo) => { listedItemClickListener(savedInfo.id, savedInfo); });
+};
+
 window.onload = async () => { 
   const productList = await fetchProducts('computer');
   const { results } = productList;
   createProductListing(results);
   emptyCartBtnElement.addEventListener('click', emptyCart);
+  const savedCartItems = getSavedCartItems();
+  if (savedCartItems) buildSavedCartElements(savedCartItems);
 };
