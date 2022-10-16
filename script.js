@@ -10,18 +10,17 @@ const loadingElement = document.querySelector('.loading');
 const cartItems = [];
 let totalPrice = 0;
 
-const updatePrice = (price, isPositive) => {
+const updateTotalPrice = (price) => {
   if (price === 0) totalPrice = 0;
-  else totalPrice += isPositive ? price : -price;
-  totalPrice = Math.abs(totalPrice);
-  totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+  else totalPrice += price;
+  totalPriceElement.textContent = `R$ ${Math.abs(totalPrice).toFixed(2)}`;
 };
 
 const emptyCart = () => {
   while (cartItemListElement.firstChild) {
     cartItemListElement.removeChild(cartItemListElement.firstChild);
   }
-  updatePrice(0);
+  updateTotalPrice(0);
   cartItems.length = 0;
   localStorage.removeItem('cartItems');
 };
@@ -81,7 +80,7 @@ const getIdFromProductItem = (product) => product.querySelector('span.id').inner
 
 const cartItemClickListener = (cartItem, price, neededInfo) => {
   cartItem.parentElement.removeChild(cartItem);
-  updatePrice(price);
+  updateTotalPrice(-price);
   cartItems.splice(cartItems.indexOf(neededInfo), 1);
   if (!cartItems.length) {
     localStorage.removeItem('cartItems');
@@ -106,7 +105,7 @@ const createCartItemElement = (neededInfo) => {
   li.addEventListener('click', (event) => {
     cartItemClickListener(event.target, price, neededInfo); 
   });
-  updatePrice(price, true);
+  updateTotalPrice(price);
   return li;
 };
 
