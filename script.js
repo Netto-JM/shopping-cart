@@ -6,7 +6,6 @@
 const cartItemListElement = document.querySelector('.cart__items');
 const emptyCartBtnElement = document.querySelector('.empty-cart');
 const totalPriceElement = document.querySelector('.total-price');
-// const containerElement = document.querySelector('.container');
 const loadingElement = document.querySelector('.loading');
 const cartItems = [];
 let totalPrice = 0;
