@@ -6,12 +6,15 @@
 const cartItemListElement = document.querySelector('.cart__items');
 const emptyCartBtnElement = document.querySelector('.empty-cart');
 const totalPriceElement = document.querySelector('.total-price');
+// const containerElement = document.querySelector('.container');
+const loadingElement = document.querySelector('.loading');
 const cartItems = [];
 let totalPrice = 0;
 
 const updatePrice = (price, isPositive) => {
   if (price === 0) totalPrice = 0;
   else totalPrice += isPositive ? price : -price;
+  totalPrice = Math.abs(totalPrice);
   totalPriceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
 };
 
@@ -111,7 +114,10 @@ const createCartItemElement = (neededInfo) => {
 const getNeededInfo = ({ id, title, price }) => ({ id, title, price });
 
 const listedItemClickListener = async (itemId, savedInfo) => {
+  const loadingCartItem = createCustomElement('h1', 'loading', 'carregando...');
+  cartItemListElement.appendChild(loadingCartItem);
   const itemInfo = savedInfo || await fetchItem(itemId);
+  cartItemListElement.removeChild(loadingCartItem);
   const neededInfo = getNeededInfo(itemInfo);
   const cartItemElement = createCartItemElement(neededInfo);
   cartItemListElement.appendChild(cartItemElement);
@@ -136,6 +142,7 @@ const buildSavedCartElements = (savedCartItems) => {
 
 window.onload = async () => { 
   const productList = await fetchProducts('computer');
+  loadingElement.parentElement.removeChild(loadingElement);
   const { results } = productList;
   createProductListing(results);
   emptyCartBtnElement.addEventListener('click', emptyCart);
