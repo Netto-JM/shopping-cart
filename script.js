@@ -11,8 +11,7 @@ const cartItems = [];
 let totalPrice = 0;
 
 const updateTotalPrice = (price) => {
-  if (price === 0) totalPrice = 0;
-  else totalPrice += price;
+  totalPrice += (price === 0) ? -totalPrice : price;
   totalPriceElement.textContent = `R$ ${Math.abs(totalPrice).toFixed(2)}`;
 };
 
